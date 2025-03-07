@@ -1,1 +1,1 @@
-# gin-mail
+# gin-mall
