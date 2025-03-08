@@ -59,6 +59,11 @@ func Database(connRead, connWrite string) {
 	_db = db
 
 	// 主从配置
+	// 核心组件：使用 GORM 的 dbresolver 插件实现读写分离。
+	// 参数说明：
+	// Sources：定义写操作（INSERT/UPDATE/DELETE）连接的主库（Master）。
+	// Replicas：定义读操作（SELECT）连接的从库（Slave），支持多个从库负载均衡。
+	// Policy：定义从库选择策略，此处为 RandomPolicy（负载均衡策略，随机选择一个从库)。
 	_ = _db.Use(dbresolver.Register(dbresolver.Config{
 		Sources:  []gorm.Dialector{mysql.Open(connWrite)},                      // 写操作
 		Replicas: []gorm.Dialector{mysql.Open(connRead), mysql.Open(connRead)}, // 读操作

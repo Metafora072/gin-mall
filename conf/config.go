@@ -1,6 +1,7 @@
 package conf
 
 import (
+	"gin-mail/dao"
 	"gopkg.in/ini.v1"
 	"strings"
 )
@@ -33,7 +34,7 @@ var (
 
 func Init() {
 	// 读取本地环境变量
-	file, err := ini.Load("./conf/config/ini")
+	file, err := ini.Load("./conf/config.ini")
 	if err != nil {
 		panic(err)
 	}
