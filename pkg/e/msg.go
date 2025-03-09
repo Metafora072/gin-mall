@@ -5,11 +5,14 @@ var MsgFlags = map[int]string{
 	Error:         "fail",
 	InvalidParams: "参数错误",
 
-	ErrorExistUser:         "用户名已存在",
-	ErrorFailEncryption:    "密码加密失败",
-	ErrorExistUserNotFound: "用户不存在",
-	ErrorNotCompare:        "密码错误",
-	ErrorAuthToken:         "token 认证失败",
+	// user 模块错误
+	ErrorExistUser:             "用户名已存在",
+	ErrorFailEncryption:        "密码加密失败",
+	ErrorExistUserNotFound:     "用户不存在",
+	ErrorNotCompare:            "密码错误",
+	ErrorAuthToken:             "token 认证失败",
+	ErrorAuthCheckTokenTimeout: "token 过期",
+	ErrorUploadFail:            "上传失败",
 }
 
 // GetMsg 获取状态码对应的信息

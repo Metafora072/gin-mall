@@ -6,9 +6,11 @@ const (
 	Error         = 500
 	InvalidParams = 400
 
-	ErrorExistUser         = 30001 // 用户已存在
-	ErrorFailEncryption    = 30002 // 加密失败
-	ErrorExistUserNotFound = 30003 // 用户不存在
-	ErrorNotCompare        = 30004 // 密码错误
-	ErrorAuthToken         = 30005 // token 认证失败
+	ErrorExistUser             = 30001 // 用户已存在
+	ErrorFailEncryption        = 30002 // 加密失败
+	ErrorExistUserNotFound     = 30003 // 用户不存在
+	ErrorNotCompare            = 30004 // 密码错误
+	ErrorAuthToken             = 30005 // token 认证失败
+	ErrorAuthCheckTokenTimeout = 30006 // token 过期
+	ErrorUploadFail            = 30007 // 上传失败
 )

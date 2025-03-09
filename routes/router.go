@@ -23,6 +23,13 @@ func NewRouter() *gin.Engine {
 		// 用户操作
 		v1.POST("user/register", api.UserRegisterHandler)
 		v1.POST("user/login", api.UserLoginHandler)
+
+		authed := v1.Group("/")      // 需要登陆保护
+		authed.Use(middleware.JWT()) // JWT 认证中间件
+		{
+			authed.PUT("user", api.UserUpdate)      // 修改昵称
+			authed.POST("avatar", api.UploadAvatar) // 上传头像
+		}
 	}
 	return r
 }
