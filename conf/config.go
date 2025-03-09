@@ -81,7 +81,7 @@ func LoadEmail(file *ini.File) {
 }
 
 func LoadPhotoPath(file *ini.File) {
-	Host = file.Section("photo").Key("Host").String()
-	ProductPath = file.Section("photo").Key("ProductPath").String()
-	AvatarPath = file.Section("photo").Key("AvatarPath").String()
+	Host = file.Section("path").Key("Host").String()
+	ProductPath = file.Section("path").Key("ProductPath").String()
+	AvatarPath = file.Section("path").Key("AvatarPath").String()
 }
