@@ -73,5 +73,15 @@ func SendEmail(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusBadRequest, err)
 	}
+}
 
+// ValidEmail
+func ValidEmail(c *gin.Context) {
+	var validEmail service.ValidEmailService
+	if err := c.ShouldBind(&validEmail); err == nil {
+		res := validEmail.Valid(c.Request.Context(), c.GetHeader("Authorization"))
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, err)
+	}
 }

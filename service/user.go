@@ -11,6 +11,7 @@ import (
 	"gopkg.in/mail.v2"
 	"mime/multipart"
 	"strings"
+	"time"
 )
 
 // UserService 是用户普通请求绑定的结构体
@@ -27,6 +28,9 @@ type SendEmailService struct {
 	Email         string `json:"email" form:"email"`
 	Password      string `json:"password" form:"password"`
 	OperationType uint   `json:"operation_type" form:"operation_type"`
+}
+
+type ValidEmailService struct {
 }
 
 // Register 处理用户注册逻辑
@@ -283,4 +287,77 @@ func (service *SendEmailService) Send(ctx context.Context, uid uint) serializer.
 		Status: code,
 		Msg:    e.GetMsg(code),
 	}
+}
+
+// Valid 验证邮箱
+func (service *ValidEmailService) Valid(ctx context.Context, token string) serializer.Response {
+	var userId, operationType uint
+	var email, password string
+	code := e.Success
+
+	// 验证 token
+	if token == "" {
+		code = e.InvalidParams
+	} else {
+		claims, err := utils.ParseEmailToken(token)
+		if err != nil {
+			code = e.ErrorAuthToken
+		} else if time.Now().Unix() > claims.ExpiresAt.Time.Unix() {
+			code = e.ErrorAuthCheckTokenTimeout
+		} else {
+			userId = claims.UserID
+			email = claims.Email
+			password = claims.Password
+			operationType = claims.OperationType
+		}
+	}
+	if code != e.Success {
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+
+	// 获取该用户的信息
+	userDao := dao.NewUserDao(ctx)
+	user, err := userDao.GetUserById(userId)
+	if err != nil {
+		code = e.Error
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+
+	// 根据 operationType 来进行不同的处理
+	if operationType == 1 { // 绑定邮箱
+		user.Email = email
+	} else if operationType == 2 { // 解绑邮箱
+		user.Email = ""
+	} else if operationType == 3 { // 修改密码
+		err = user.SetPassword(password)
+		if err != nil {
+			code = e.Error
+			return serializer.Response{
+				Status: code,
+				Msg:    e.GetMsg(code),
+			}
+		}
+	}
+
+	err = userDao.UpdateUserById(userId, user)
+	if err != nil {
+		code = e.Error
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+
+	return serializer.Response{
+		Status: code,
+		Msg:    e.GetMsg(code),
+		Data:   serializer.BuildUser(user),
+	}
+
 }
