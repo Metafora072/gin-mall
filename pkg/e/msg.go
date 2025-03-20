@@ -13,6 +13,7 @@ var MsgFlags = map[int]string{
 	ErrorAuthToken:             "token 认证失败",
 	ErrorAuthCheckTokenTimeout: "token 过期",
 	ErrorUploadFail:            "上传失败",
+	ErrorSendEmail:             "发送邮件失败",
 }
 
 // GetMsg 获取状态码对应的信息

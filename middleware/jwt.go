@@ -23,7 +23,7 @@ func JWT() gin.HandlerFunc {
 		// 若 Authorization 头未提供 Token，返回 HTTP 404 状态码和错误信息。
 		if token == "" {
 			code = http.StatusNotFound
-			c.JSON(code, gin.H{
+			c.JSON(http.StatusNotFound, gin.H{
 				"status": code,
 				"msg":    e.GetMsg(code),
 				"data":   "缺少token",
@@ -36,7 +36,7 @@ func JWT() gin.HandlerFunc {
 		claims, err := utils.ParseToken(token)
 		if err != nil { // 解析错误
 			code = e.ErrorAuthToken
-			c.JSON(code, gin.H{
+			c.JSON(http.StatusUnauthorized, gin.H{
 				"status": code,
 				"msg":    e.GetMsg(code),
 				"data":   "解析token失败",
@@ -48,7 +48,7 @@ func JWT() gin.HandlerFunc {
 		// token 已被解析完毕，检查 token 是否过期
 		if time.Now().Unix() > claims.ExpiresAt.Time.Unix() {
 			code = e.ErrorAuthCheckTokenTimeout
-			c.JSON(code, gin.H{
+			c.JSON(http.StatusUnauthorized, gin.H{
 				"status": code,
 				"msg":    e.GetMsg(code),
 				"data":   "token过期",

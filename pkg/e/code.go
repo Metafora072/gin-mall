@@ -13,4 +13,5 @@ const (
 	ErrorAuthToken             = 30005 // token 认证失败
 	ErrorAuthCheckTokenTimeout = 30006 // token 过期
 	ErrorUploadFail            = 30007 // 上传失败
+	ErrorSendEmail             = 30008 // 发送邮件失败
 )

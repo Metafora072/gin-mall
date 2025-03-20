@@ -27,8 +27,9 @@ func NewRouter() *gin.Engine {
 		authed := v1.Group("/")      // 需要登陆保护
 		authed.Use(middleware.JWT()) // JWT 认证中间件
 		{
-			authed.PUT("user", api.UserUpdate)      // 修改昵称
-			authed.POST("avatar", api.UploadAvatar) // 上传头像
+			authed.PUT("user", api.UserUpdate)               // 修改昵称
+			authed.POST("avatar", api.UploadAvatar)          // 上传头像
+			authed.POST("user/sending-email", api.SendEmail) // 发送邮件
 		}
 	}
 	return r

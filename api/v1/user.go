@@ -62,3 +62,16 @@ func UploadAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, err)
 	}
 }
+
+// SendEmail 是处理用户发送邮件路由的 controller 函数
+func SendEmail(c *gin.Context) {
+	var sendEmail service.SendEmailService
+	claims, _ := utils.ParseToken(c.GetHeader("Authorization"))
+	if err := c.ShouldBind(&sendEmail); err == nil {
+		res := sendEmail.Send(c.Request.Context(), claims.Id)
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, err)
+	}
+
+}
