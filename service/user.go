@@ -30,7 +30,14 @@ type SendEmailService struct {
 	OperationType uint   `json:"operation_type" form:"operation_type"`
 }
 
+// ValidEmailService 是验证邮箱绑定的结构体，不需要任何字段，因为字段信息已经被 Send 方法嵌入到 token 中
 type ValidEmailService struct {
+}
+
+// ShowMoneyService 是显示金额绑定的结构体
+// Key: 金额加密密钥。金额是使用 AES 对称加密的，需要 key 密钥来进行解密，需要确保和加密金额时的 key 相同
+type ShowMoneyService struct {
+	Key string `json:"key" form:"key"`
 }
 
 // Register 处理用户注册逻辑
@@ -360,4 +367,24 @@ func (service *ValidEmailService) Valid(ctx context.Context, token string) seria
 		Data:   serializer.BuildUser(user),
 	}
 
+}
+
+// Show 展示用户金额
+func (service *ShowMoneyService) Show(ctx context.Context, uid uint) serializer.Response {
+	code := e.Success
+	userDao := dao.NewUserDao(ctx)
+	user, err := userDao.GetUserById(uid)
+	if err != nil {
+		code = e.Error
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+		}
+	}
+
+	return serializer.Response{
+		Status: code,
+		Data:   serializer.BuildMoney(user, service.Key),
+		Msg:    e.GetMsg(code),
+	}
 }

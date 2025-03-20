@@ -75,11 +75,23 @@ func SendEmail(c *gin.Context) {
 	}
 }
 
-// ValidEmail
+// ValidEmail 是处理验证邮箱路由的 controller 函数
 func ValidEmail(c *gin.Context) {
 	var validEmail service.ValidEmailService
 	if err := c.ShouldBind(&validEmail); err == nil {
 		res := validEmail.Valid(c.Request.Context(), c.GetHeader("Authorization"))
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, err)
+	}
+}
+
+// ShowMoney 是处理显示金额路由的 controller 函数
+func ShowMoney(c *gin.Context) {
+	var showMoney service.ShowMoneyService
+	claims, _ := utils.ParseToken(c.GetHeader("Authorization"))
+	if err := c.ShouldBind(&showMoney); err == nil {
+		res := showMoney.Show(c.Request.Context(), claims.Id)
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, err)
