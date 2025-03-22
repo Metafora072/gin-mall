@@ -14,7 +14,8 @@ func UserRegisterHandler(c *gin.Context) {
 		res := userRegister.Register(c.Request.Context())
 		c.JSON(http.StatusOK, res)
 	} else {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("UserRegisterHandler:", err)
 	}
 
 }
@@ -26,7 +27,8 @@ func UserLoginHandler(c *gin.Context) {
 		res := userLogin.Login(c.Request.Context())
 		c.JSON(http.StatusOK, res)
 	} else {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("UserLoginHandler:", err)
 	}
 }
 
@@ -38,7 +40,8 @@ func UserUpdate(c *gin.Context) {
 		res := userUpdate.Update(c.Request.Context(), claims.Id)
 		c.JSON(http.StatusOK, res)
 	} else {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("UserUpdate:", err)
 	}
 }
 
@@ -50,6 +53,7 @@ func UploadAvatar(c *gin.Context) {
 	file, fileHeader, err := c.Request.FormFile("file")
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		utils.LogrusObj.Infoln("UploadAvatar:", err)
 		return
 	}
 	fileSize := fileHeader.Size
@@ -59,7 +63,8 @@ func UploadAvatar(c *gin.Context) {
 		res := uploadAvatar.Post(c.Request.Context(), claims.Id, file, fileSize)
 		c.JSON(http.StatusOK, res)
 	} else {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("UploadAvatar:", err)
 	}
 }
 
@@ -71,7 +76,8 @@ func SendEmail(c *gin.Context) {
 		res := sendEmail.Send(c.Request.Context(), claims.Id)
 		c.JSON(http.StatusOK, res)
 	} else {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("SendEmail:", err)
 	}
 }
 
@@ -82,7 +88,8 @@ func ValidEmail(c *gin.Context) {
 		res := validEmail.Valid(c.Request.Context(), c.GetHeader("Authorization"))
 		c.JSON(http.StatusOK, res)
 	} else {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("ValidEmail:", err)
 	}
 }
 
@@ -94,6 +101,7 @@ func ShowMoney(c *gin.Context) {
 		res := showMoney.Show(c.Request.Context(), claims.Id)
 		c.JSON(http.StatusOK, res)
 	} else {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("ShowMoney:", err)
 	}
 }

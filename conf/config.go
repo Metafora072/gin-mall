@@ -17,11 +17,6 @@ var (
 	DbPassword string
 	DbName     string
 
-	RedisDb     string
-	RedisAddr   string
-	RedisPw     string
-	RedisDbName string
-
 	ValidEmail string
 	SmtpHost   string
 	SmtpEmail  string
@@ -40,7 +35,6 @@ func Init() {
 	}
 	LoadServer(file)
 	LoadMysql(file)
-	LoadRedis(file)
 	LoadEmail(file)
 	LoadPhotoPath(file)
 
@@ -66,12 +60,14 @@ func LoadMysql(file *ini.File) {
 	DbName = file.Section("mysql").Key("DbName").String()
 }
 
+/* LoadRedis 在 cache 模块再导入，否则会造成循环引用
 func LoadRedis(file *ini.File) {
 	RedisDb = file.Section("redis").Key("RedisDb").String()
 	RedisAddr = file.Section("redis").Key("RedisAddr").String()
 	RedisPw = file.Section("redis").Key("RedisPw").String()
 	RedisDbName = file.Section("redis").Key("RedisDbName").String()
 }
+*/
 
 func LoadEmail(file *ini.File) {
 	ValidEmail = file.Section("email").Key("ValidEmail").String()
