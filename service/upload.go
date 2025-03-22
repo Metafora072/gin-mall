@@ -2,6 +2,7 @@ package service
 
 import (
 	"gin-mail/conf"
+	"gin-mail/pkg/utils"
 	"io"
 	"mime/multipart"
 	"os"
@@ -31,11 +32,13 @@ func UploadAvatarToLocalStatic(file multipart.File, userId uint, userName string
 	// 读取上传文件内容到内存
 	content, err := io.ReadAll(file)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		return "", err
 	}
 	// 将文件内容写入本地存储（权限 0666：所有用户可读写)
 	err = os.WriteFile(avatarPath, content, 0666)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		return
 	}
 	// 返回相对路径 (user{userId}/{userName}.jpg)
@@ -47,6 +50,7 @@ func UploadAvatarToLocalStatic(file multipart.File, userId uint, userName string
 func DirExistOrNot(fileAddr string) bool {
 	s, err := os.Stat(fileAddr)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		return false
 	}
 	return s.IsDir()
@@ -56,6 +60,7 @@ func DirExistOrNot(fileAddr string) bool {
 func CreateDir(dirName string) bool {
 	err := os.MkdirAll(dirName, 0755)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		return false
 	}
 	return true

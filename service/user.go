@@ -61,6 +61,7 @@ func (service *UserService) Register(ctx context.Context) serializer.Response {
 	userDao := dao.NewUserDao(ctx)
 	_, exist, err := userDao.ExistOrNotByUserName(service.UserName)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -84,6 +85,7 @@ func (service *UserService) Register(ctx context.Context) serializer.Response {
 	}
 	// 密码加密
 	if err = user.SetPassword(service.Password); err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -93,6 +95,7 @@ func (service *UserService) Register(ctx context.Context) serializer.Response {
 	// 创建用户
 	err = userDao.CreateUser(&user)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 	}
 	return serializer.Response{
@@ -109,6 +112,7 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 	user, exist, err := userDao.ExistOrNotByUserName(service.UserName)
 	// 检验相应用户记录是否在数据库中存在
 	if !exist || err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.ErrorExistUserNotFound
 		return serializer.Response{
 			Status: code,
@@ -128,6 +132,7 @@ func (service *UserService) Login(ctx context.Context) serializer.Response {
 	// 签发 token
 	token, err := utils.GenerateToken(user.ID, user.UserName, 0)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.ErrorAuthToken
 		return serializer.Response{
 			Status: code,
@@ -159,6 +164,7 @@ func (service *UserService) Update(ctx context.Context, uid uint) serializer.Res
 	}
 	err = userDao.UpdateUserById(uid, user)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -182,6 +188,7 @@ func (service *UserService) Post(ctx context.Context, uid uint, file multipart.F
 	user, err = userDao.GetUserById(uid)
 	if err != nil {
 		code = e.Error
+		utils.LogrusObj.Infoln("err", err)
 		return serializer.Response{
 			Status: code,
 			Msg:    e.GetMsg(code),
@@ -191,6 +198,7 @@ func (service *UserService) Post(ctx context.Context, uid uint, file multipart.F
 	// 保存图片到本地
 	path, err := UploadAvatarToLocalStatic(file, uid, user.UserName)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.ErrorUploadFail
 		return serializer.Response{
 			Status: code,
@@ -202,6 +210,7 @@ func (service *UserService) Post(ctx context.Context, uid uint, file multipart.F
 	user.Avatar = path
 	err = userDao.UpdateUserById(uid, user)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -228,6 +237,7 @@ func (service *SendEmailService) Send(ctx context.Context, uid uint) serializer.
 	// 注意：此处直接将密码传入可能存在安全隐患，建议使用加密传输
 	emailToken, err := utils.GenerateEmailToken(uid, service.OperationType, service.Email, service.Password)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.ErrorAuthToken
 		return serializer.Response{
 			Status: code,
@@ -246,6 +256,7 @@ func (service *SendEmailService) Send(ctx context.Context, uid uint) serializer.
 	noticeDao := dao.NewNoticeDao(ctx)
 	notice, err = noticeDao.GetNoticeById(service.OperationType)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -282,6 +293,7 @@ func (service *SendEmailService) Send(ctx context.Context, uid uint) serializer.
 
 	// DialAndSend 打开与 SMTP 服务器的连接，发送给定的电子邮件并关闭连接。
 	if err = d.DialAndSend(m); err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.ErrorSendEmail
 		return serializer.Response{
 			Status: code,
@@ -308,6 +320,7 @@ func (service *ValidEmailService) Valid(ctx context.Context, token string) seria
 	} else {
 		claims, err := utils.ParseEmailToken(token)
 		if err != nil {
+			utils.LogrusObj.Infoln("err", err)
 			code = e.ErrorAuthToken
 		} else if time.Now().Unix() > claims.ExpiresAt.Time.Unix() {
 			code = e.ErrorAuthCheckTokenTimeout
@@ -329,6 +342,7 @@ func (service *ValidEmailService) Valid(ctx context.Context, token string) seria
 	userDao := dao.NewUserDao(ctx)
 	user, err := userDao.GetUserById(userId)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -354,6 +368,7 @@ func (service *ValidEmailService) Valid(ctx context.Context, token string) seria
 
 	err = userDao.UpdateUserById(userId, user)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -375,6 +390,7 @@ func (service *ShowMoneyService) Show(ctx context.Context, uid uint) serializer.
 	userDao := dao.NewUserDao(ctx)
 	user, err := userDao.GetUserById(uid)
 	if err != nil {
+		utils.LogrusObj.Infoln("err", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
