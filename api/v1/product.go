@@ -22,3 +22,15 @@ func CreateProduct(c *gin.Context) {
 		utils.LogrusObj.Infoln("CreateProduct", err)
 	}
 }
+
+// ListProduct 是处理获取商品列表路由的 controller 函数
+func ListProduct(c *gin.Context) {
+	var listProductService service.ProductService
+	if err := c.ShouldBind(&listProductService); err == nil {
+		res := listProductService.List(c.Request.Context())
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("CreateProduct", err)
+	}
+}

@@ -141,3 +141,51 @@ func (service *ProductService) Create(ctx context.Context, uid uint, files []*mu
 		Data:   serializer.BuildProduct(ctx, product), // 返回给前端 productVO 数据
 	}
 }
+
+// List 获取商品列表
+func (service *ProductService) List(ctx context.Context) serializer.Response {
+	var products []*model.Product
+	var err error
+
+	code := e.Success
+	// 如果未指定 `PageSize`，默认每页 15 条数据
+	if service.PageSize == 0 {
+		service.PageSize = 15
+	}
+
+	// condition 描述查询条件
+	condition := make(map[string]interface{})
+	if service.CategoryId != 0 {
+		// 如果传入了 `CategoryId`，添加到查询条件中，展示的商品只会展示相应 CategoryId 的商品
+		condition["category_id"] = service.CategoryId
+	}
+
+	productDao := dao.NewProductDao(ctx)
+	// 查询满足条件的商品总数 total
+	total, err := productDao.CountProductByCondition(condition)
+	if err != nil {
+		code = e.Error
+		utils.LogrusObj.Infoln("ProductService CountProductByCondition:", err)
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+
+	// 创建一个 WaitGroup 用于等待 Goroutine 完成
+	// 与直接开启协程的区别是；
+	// 使用 WaitGroup 保证当前协程等待 Goroutine 完成后再继续执行。
+	// 如果不使用 WaitGroup，由于 Goroutine 异步执行，不阻塞主协程，主协程不会等待 products 数据获取完成，可能导致 products 数据未准备好时继续向下执行
+	// 在获取数据后立即使用的场景下，比如这里获取 products 就要用 BuildProducts 来构建 productsVO，就要用 WaitGroup
+	// TODO: go func 是否有作用？
+	wg := new(sync.WaitGroup)
+	wg.Add(1)
+	go func() {
+		productDao = dao.NewProductDaoByDB(productDao.DB)
+		products, _ = productDao.ListProductByCondition(condition, service.BasePage)
+		wg.Done()
+	}()
+	wg.Wait()
+	return serializer.BuildListResponse(serializer.BuildProducts(ctx, products), uint(total))
+}

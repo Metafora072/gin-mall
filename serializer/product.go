@@ -44,3 +44,11 @@ func BuildProduct(ctx context.Context, item *model.Product) ProductVO {
 	}
 
 }
+
+func BuildProducts(ctx context.Context, items []*model.Product) (products []ProductVO) {
+	for _, item := range items {
+		product := BuildProduct(ctx, item)
+		products = append(products, product)
+	}
+	return
+}

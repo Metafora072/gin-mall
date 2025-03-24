@@ -27,6 +27,9 @@ func NewRouter() *gin.Engine {
 		// 轮播图
 		v1.GET("carousels", api.ListCarousel)
 
+		// 商品操作
+		v1.GET("products", api.ListProduct) // 获取商品列表
+
 		authed := v1.Group("/")      // 需要登陆保护
 		authed.Use(middleware.JWT()) // JWT 认证中间件
 		{
