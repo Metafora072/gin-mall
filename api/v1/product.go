@@ -31,6 +31,18 @@ func ListProduct(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		utils.LogrusObj.Infoln("CreateProduct", err)
+		utils.LogrusObj.Infoln("ListProduct", err)
+	}
+}
+
+// SearchProduct 是处理搜索商品路由的 controller 函数
+func SearchProduct(c *gin.Context) {
+	var searchProductService service.ProductService
+	if err := c.ShouldBind(&searchProductService); err == nil {
+		res := searchProductService.Search(c.Request.Context())
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("SearchProduct", err)
 	}
 }

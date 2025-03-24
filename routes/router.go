@@ -28,7 +28,7 @@ func NewRouter() *gin.Engine {
 		v1.GET("carousels", api.ListCarousel)
 
 		// 商品操作
-		v1.GET("products", api.ListProduct) // 获取商品列表
+		v1.GET("products", api.ListProduct) // 获取商品列表 (不需要用户登录认证)
 
 		authed := v1.Group("/")      // 需要登陆保护
 		authed.Use(middleware.JWT()) // JWT 认证中间件
@@ -43,7 +43,8 @@ func NewRouter() *gin.Engine {
 			authed.POST("money", api.ShowMoney) // 显示金额
 
 			// 商品操作
-			authed.POST("product", api.CreateProduct) // 创建商品
+			authed.POST("product", api.CreateProduct)  // 创建商品
+			authed.POST("products", api.SearchProduct) // 搜索商品
 		}
 	}
 	return r

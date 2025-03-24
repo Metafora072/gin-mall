@@ -189,3 +189,27 @@ func (service *ProductService) List(ctx context.Context) serializer.Response {
 	wg.Wait()
 	return serializer.BuildListResponse(serializer.BuildProducts(ctx, products), uint(total))
 }
+
+// Search 搜索商品
+func (service *ProductService) Search(ctx context.Context) serializer.Response {
+	code := e.Success
+	if service.PageSize == 0 {
+		service.PageSize = 15
+	}
+
+	productDao := dao.NewProductDao(ctx)
+	// products: 应展示的符合条件的商品的指定页的商品信息
+	// count: 符合条件的商品总数，注意 count != len(products). products 只有相应页的商品信息 len(products) <= pageSize
+	products, count, err := productDao.SearchProduct(service.Info, service.BasePage)
+	if err != nil {
+		code = e.Error
+		utils.LogrusObj.Infoln("ProductService Search:", err)
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+
+	return serializer.BuildListResponse(serializer.BuildProducts(ctx, products), uint(count))
+}
