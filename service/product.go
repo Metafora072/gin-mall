@@ -213,3 +213,27 @@ func (service *ProductService) Search(ctx context.Context) serializer.Response {
 
 	return serializer.BuildListResponse(serializer.BuildProducts(ctx, products), uint(count))
 }
+
+// Show 获取商品详细信息
+func (service *ProductService) Show(ctx context.Context, id string) serializer.Response {
+	code := e.Success
+	pid, _ := strconv.Atoi(id)
+
+	productDao := dao.NewProductDao(ctx)
+	product, err := productDao.GetProductById(uint(pid))
+	if err != nil {
+		code = e.Error
+		utils.LogrusObj.Infoln("ProductService Show:", err)
+		return serializer.Response{
+			Status: code,
+			Msg:    e.GetMsg(code),
+			Error:  err.Error(),
+		}
+	}
+
+	return serializer.Response{
+		Status: code,
+		Msg:    e.GetMsg(code),
+		Data:   serializer.BuildProduct(ctx, product),
+	}
+}

@@ -47,3 +47,9 @@ func (dao *ProductDao) SearchProduct(info string, page model.BasePage) (products
 	err = dao.DB.Model(&model.Product{}).Where("title LIKE ? OR info LIKE ?", "%"+info+"%", "%"+info+"%").Offset((page.PageNum - 1) * page.PageSize).Limit(page.PageSize).Find(&products).Error
 	return
 }
+
+// GetProductById 根据商品 id 搜索相应商品
+func (dao *ProductDao) GetProductById(id uint) (product *model.Product, err error) {
+	err = dao.DB.Model(&model.Product{}).Where("id = ?", id).First(&product).Error
+	return
+}

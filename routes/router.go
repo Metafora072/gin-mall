@@ -28,7 +28,8 @@ func NewRouter() *gin.Engine {
 		v1.GET("carousels", api.ListCarousel)
 
 		// 商品操作
-		v1.GET("products", api.ListProduct) // 获取商品列表 (不需要用户登录认证)
+		v1.GET("products", api.ListProduct)     // 获取商品列表 (不需要用户登录认证)
+		v1.GET("products/:id", api.ShowProduct) // 获取商品详细信息
 
 		authed := v1.Group("/")      // 需要登陆保护
 		authed.Use(middleware.JWT()) // JWT 认证中间件

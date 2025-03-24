@@ -46,3 +46,15 @@ func SearchProduct(c *gin.Context) {
 		utils.LogrusObj.Infoln("SearchProduct", err)
 	}
 }
+
+// ShowProduct 是处理获取商品详细信息路由的 controller 函数
+func ShowProduct(c *gin.Context) {
+	var showProductService service.ProductService
+	if err := c.ShouldBind(&showProductService); err == nil {
+		res := showProductService.Show(c.Request.Context(), c.Param("id"))
+		c.JSON(http.StatusOK, res)
+	} else {
+		c.JSON(http.StatusBadRequest, ErrorResponse(err))
+		utils.LogrusObj.Infoln("ShowProduct", err)
+	}
+}
