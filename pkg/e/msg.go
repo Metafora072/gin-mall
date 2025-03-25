@@ -17,6 +17,10 @@ var MsgFlags = map[int]string{
 
 	// product 模块错误
 	ErrorProductImgUpload: "上传商品图片失败",
+
+	// 收藏夹模块错误
+	ErrorFavoriteExist:          "收藏夹已存在",
+	ErrorFavoriteDeleteNotFound: "相应收藏夹不存在",
 }
 
 // GetMsg 获取状态码对应的信息

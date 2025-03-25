@@ -18,4 +18,8 @@ const (
 
 	// product 模块错误
 	ErrorProductImgUpload = 40001 // 上传商品图片失败
+
+	// 收藏夹错误
+	ErrorFavoriteExist          = 50001 // 收藏夹已存在
+	ErrorFavoriteDeleteNotFound = 50002 // 相应收藏夹不存在
 )

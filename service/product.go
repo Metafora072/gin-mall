@@ -38,12 +38,15 @@ func (service *ProductService) Create(ctx context.Context, uid uint, files []*mu
 	boss, _ = userDao.GetUserById(uid)
 
 	// 以第一张作为封面图
-	tmp, _ := files[0].Open()
+	tmp, err := files[0].Open()
+	if err != nil {
+		utils.LogrusObj.Infoln("ProductService func Create in files[0].Open: ", err)
+	}
 	// 将图片上传至本地静态目录并返回路径
 	path, err := UploadProductToLocalStatic(tmp, uid, service.Name)
 	if err != nil {
 		code = e.ErrorProductImgUpload
-		utils.LogrusObj.Infoln("ProductService func Create:", err)
+		utils.LogrusObj.Infoln("ProductService func Create in UploadProductToLocalStatic:", err)
 		return serializer.Response{
 			Status: code,
 			Msg:    e.GetMsg(code),

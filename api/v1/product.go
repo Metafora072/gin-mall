@@ -19,7 +19,7 @@ func CreateProduct(c *gin.Context) {
 		c.JSON(http.StatusOK, res)
 	} else {
 		c.JSON(http.StatusBadRequest, ErrorResponse(err))
-		utils.LogrusObj.Infoln("CreateProduct", err)
+		utils.LogrusObj.Infoln("CreateProduct: ", err)
 	}
 }
 
