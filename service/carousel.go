@@ -16,7 +16,7 @@ func (service *CarouselService) List(ctx context.Context) serializer.Response {
 	code := e.Success
 	carousels, err := carouselDao.ListCarousel()
 	if err != nil {
-		utils.LogrusObj.Infoln("err", err)
+		utils.LogrusObj.Infoln("CarouselService func List: ", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
