@@ -25,4 +25,8 @@ const (
 
 	// address 模块错误
 	ErrorAddressNotFound = 60001 // address 记录不存在
+
+	// 购物车 cart 模块错误
+	ErrorProductAndBossNotMatch = 70001 // 购物车商品和卖家不匹配
+	ErrorCartNotFound           = 70002 // 购物车记录不存在
 )

@@ -24,6 +24,10 @@ var MsgFlags = map[int]string{
 
 	// address 模块错误
 	ErrorAddressNotFound: "相应 address 记录不存在",
+
+	// 购物车 cart 模块错误
+	ErrorProductAndBossNotMatch: "购物车商品和卖家不匹配",
+	ErrorCartNotFound:           "购物车记录不存在",
 }
 
 // GetMsg 获取状态码对应的信息
