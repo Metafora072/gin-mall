@@ -21,6 +21,9 @@ var MsgFlags = map[int]string{
 	// 收藏夹模块错误
 	ErrorFavoriteExist:          "收藏夹已存在",
 	ErrorFavoriteDeleteNotFound: "相应收藏夹不存在",
+
+	// address 模块错误
+	ErrorAddressNotFound: "相应 address 记录不存在",
 }
 
 // GetMsg 获取状态码对应的信息

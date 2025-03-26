@@ -22,4 +22,7 @@ const (
 	// 收藏夹错误
 	ErrorFavoriteExist          = 50001 // 收藏夹已存在
 	ErrorFavoriteDeleteNotFound = 50002 // 相应收藏夹不存在
+
+	// address 模块错误
+	ErrorAddressNotFound = 60001 // address 记录不存在
 )
