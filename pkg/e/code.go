@@ -29,4 +29,11 @@ const (
 	// 购物车 cart 模块错误
 	ErrorProductAndBossNotMatch = 70001 // 购物车商品和卖家不匹配
 	ErrorCartNotFound           = 70002 // 购物车记录不存在
+
+	// 订单 order 模块错误
+	ErrorOrderAddressNotFound = 80001 // 订单地址不存在
+	ErrorOrderProductNotFound = 80002 // 订单商品不存在
+	ErrorOrderBossNotFound    = 80003 // 订单卖家不存在
+	ErrorOrderNotFound        = 80004 // 相应订单不存在
+
 )

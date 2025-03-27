@@ -28,6 +28,12 @@ var MsgFlags = map[int]string{
 	// 购物车 cart 模块错误
 	ErrorProductAndBossNotMatch: "购物车商品和卖家不匹配",
 	ErrorCartNotFound:           "购物车记录不存在",
+
+	// 订单 order 模块错误
+	ErrorOrderAddressNotFound: "订单地址不存在",
+	ErrorOrderProductNotFound: "订单商品不存在",
+	ErrorOrderBossNotFound:    "订单卖家不存在",
+	ErrorOrderNotFound:        "相应订单不存在",
 }
 
 // GetMsg 获取状态码对应的信息
