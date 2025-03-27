@@ -72,6 +72,9 @@ func NewRouter() *gin.Engine {
 			authed.GET("orders", api.ListOrder)          // 获取用户所有订单
 			authed.GET("orders/:id", api.ShowOrder)      // 获取指定订单信息
 			authed.DELETE("orders/:id", api.DeleteOrder) // 删除订单
+
+			// 支付操作
+			authed.POST("pay", api.OrderPay)
 		}
 	}
 	return r

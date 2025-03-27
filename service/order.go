@@ -6,6 +6,7 @@ import (
 	"gin-mail/dao"
 	"gin-mail/model"
 	"gin-mail/pkg/e"
+	"gin-mail/pkg/utils"
 	"gin-mail/serializer"
 	"math/rand"
 	"strconv"
@@ -32,6 +33,7 @@ func (service *OrderService) Create(ctx context.Context, uid uint) serializer.Re
 	productDao := dao.NewProductDao(ctx)
 	product, err := productDao.GetProductById(service.ProductId)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func Create: ", err)
 		code = e.ErrorOrderProductNotFound
 		return serializer.Response{
 			Status: code,
@@ -44,6 +46,7 @@ func (service *OrderService) Create(ctx context.Context, uid uint) serializer.Re
 	bossDao := dao.NewUserDao(ctx)
 	_, err = bossDao.GetUserById(service.BossId)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func Create: ", err)
 		code = e.ErrorOrderBossNotFound
 		return serializer.Response{
 			Status: code,
@@ -54,6 +57,7 @@ func (service *OrderService) Create(ctx context.Context, uid uint) serializer.Re
 
 	// 判断商品和卖家是否对应
 	if product.BossId != service.BossId {
+		utils.LogrusObj.Infoln("OrderService func Create: ", err)
 		code = e.ErrorProductAndBossNotMatch
 		return serializer.Response{
 			Status: code,
@@ -65,6 +69,7 @@ func (service *OrderService) Create(ctx context.Context, uid uint) serializer.Re
 	addressDao := dao.NewAddressDao(ctx)
 	address, err := addressDao.GetAddressById(service.AddressId)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func Create: ", err)
 		code = e.ErrorOrderAddressNotFound
 		return serializer.Response{
 			Status: code,
@@ -96,6 +101,7 @@ func (service *OrderService) Create(ctx context.Context, uid uint) serializer.Re
 	// 在数据库中插入 Order 记录
 	err = orderDao.CreateOrder(order)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func Create: ", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -120,6 +126,7 @@ func (service *OrderService) Show(ctx context.Context, uid uint, oid string) ser
 	// 在数据库中获取 order 记录
 	order, err := orderDao.GetOrderByIdAndUserId(uint(orderId), uid)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func Show: ", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -132,6 +139,7 @@ func (service *OrderService) Show(ctx context.Context, uid uint, oid string) ser
 	addressDao := dao.NewAddressDao(ctx)
 	address, err := addressDao.GetAddressById(order.AddressId)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func Show: ", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -144,6 +152,7 @@ func (service *OrderService) Show(ctx context.Context, uid uint, oid string) ser
 	productDao := dao.NewProductDao(ctx)
 	product, err := productDao.GetProductById(order.ProductId)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func Show: ", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -177,6 +186,7 @@ func (service *OrderService) List(ctx context.Context, uid uint) serializer.Resp
 	// 在数据库中获取用户的所有 Order 记录
 	orderList, total, err := orderDao.ListOrderByCondition(condition, service.BasePage)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func List: ", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
@@ -197,6 +207,7 @@ func (service *OrderService) Delete(ctx context.Context, uid uint, oid string) s
 	// 在数据库中删除 Order 记录
 	deleted, err := orderDao.DeleteOrderByIdAndUserId(uint(orderId), uid)
 	if err != nil {
+		utils.LogrusObj.Infoln("OrderService func Delete: ", err)
 		code = e.Error
 		return serializer.Response{
 			Status: code,
