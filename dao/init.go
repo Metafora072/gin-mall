@@ -26,6 +26,32 @@ func Database(connRead, connWrite string) {
 		ormLogger = logger.Default
 	}
 
+	//// 加入重试机制（最多重试10次，每次等待3秒）
+	//var db *gorm.DB
+	//var err error
+	//for i := 0; i < 10; i++ {
+	//	db, err = gorm.Open(mysql.New(mysql.Config{
+	//		DSN:                       connRead,
+	//		DefaultStringSize:         256,
+	//		DisableDatetimePrecision:  true,
+	//		DontSupportRenameIndex:    true,
+	//		DontSupportRenameColumn:   true,
+	//		SkipInitializeWithVersion: false,
+	//	}), &gorm.Config{
+	//		Logger: ormLogger,
+	//		NamingStrategy: schema.NamingStrategy{
+	//			SingularTable: true,
+	//		},
+	//	})
+	//
+	//	if err == nil {
+	//		break
+	//	}
+	//
+	//	log.Printf("Waiting for MySQL to be ready... (%d/10), error: %v", i+1, err)
+	//	time.Sleep(3 * time.Second)
+	//}
+
 	db, err := gorm.Open(mysql.New(mysql.Config{
 		DSN:                       connRead, // DSN data source name
 		DefaultStringSize:         256,      // string 类型字段的默认长度
