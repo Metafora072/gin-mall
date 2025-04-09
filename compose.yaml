@@ -1,26 +1,46 @@
 services:
   gin-mall:
     container_name: gin-mall
-    image: gin-mall:v1.0
+    image: gin-mall:v3.1
     ports:
       - "3000:3000"
     depends_on:
-      - mysql
+      - mysql_master
+      - mysql_slave
       - redis
     restart: always
     networks:
       - my_net
-  mysql:
-    container_name: mysql
-    image: mysql:latest
+
+  mysql_master:
+    container_name: mysql_master
+    image: mysql:8.0
     ports:
-      - "3306:3306"
+      - "13306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=miyike3716
       - MYSQL_DATABASE=golang_mall_db
     restart: always
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_master_data:/var/lib/mysql
+      - ./conf/mysql_master/my.cnf:/etc/mysql/my.cnf
+      - ./conf/mysql_master_init:/docker-entrypoint-initdb.d
+    networks:
+      - my_net
+
+  mysql_slave:
+    container_name: mysql_slave
+    image: mysql:8.0
+    ports:
+      - "13307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=miyike3716
+      - MYSQL_DATABASE=golang_mall_db
+    restart: always
+    volumes:
+      - mysql_slave_data:/var/lib/mysql
+      - ./conf/mysql_slave/my.cnf:/etc/mysql/my.cnf
+      - ./conf/mysql_slave_init:/docker-entrypoint-initdb.d
     networks:
       - my_net
 
@@ -28,13 +48,14 @@ services:
     container_name: redis
     image: redis:latest
     ports:
-      - "6379:6379"
+      - "16379:6379"
     command: ["redis-server", "--requirepass", "miyike3716"]
     restart: always
     networks:
       - my_net
 
 volumes:
-  mysql_data:
+  mysql_master_data:
+  mysql_slave_data:
 networks:
   my_net:

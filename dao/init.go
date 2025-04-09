@@ -2,6 +2,7 @@ package dao
 
 import (
 	"context"
+	"gin-mail/pkg/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -13,7 +14,7 @@ import (
 
 var _db *gorm.DB
 
-func Database(connRead, connWrite string) {
+func Database(slaveDsn, masterDsn string) {
 	// 根据当前 Gin 的运行模式（gin.Mode()）来设置 ORM 的日志级别
 	// gin.Mode() 返回当前 Gin 框架的运行模式，它可以是以下几种之一：
 	// "debug"：开发模式，通常会输出详细的调试信息。
@@ -53,12 +54,12 @@ func Database(connRead, connWrite string) {
 	//}
 
 	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN:                       connRead, // DSN data source name
-		DefaultStringSize:         256,      // string 类型字段的默认长度
-		DisableDatetimePrecision:  true,     // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
-		DontSupportRenameIndex:    true,     // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
-		DontSupportRenameColumn:   true,     // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
-		SkipInitializeWithVersion: false,    // 根据当前 MySQL 版本自动配置
+		DSN:                       masterDsn, // DSN data source name
+		DefaultStringSize:         256,       // string 类型字段的默认长度
+		DisableDatetimePrecision:  true,      // 禁用 datetime 精度，MySQL 5.6 之前的数据库不支持
+		DontSupportRenameIndex:    true,      // 重命名索引时采用删除并新建的方式，MySQL 5.7 之前的数据库和 MariaDB 不支持重命名索引
+		DontSupportRenameColumn:   true,      // 用 `change` 重命名列，MySQL 8 之前的数据库和 MariaDB 不支持重命名列
+		SkipInitializeWithVersion: false,     // 根据当前 MySQL 版本自动配置
 	}), &gorm.Config{
 		Logger: ormLogger, // 打印日志
 		NamingStrategy: schema.NamingStrategy{
@@ -84,19 +85,23 @@ func Database(connRead, connWrite string) {
 
 	_db = db
 
+	migration()
+
 	// 主从配置
 	// 核心组件：使用 GORM 的 dbresolver 插件实现读写分离。
 	// 参数说明：
 	// Sources：定义写操作（INSERT/UPDATE/DELETE）连接的主库（Master）。
 	// Replicas：定义读操作（SELECT）连接的从库（Slave），支持多个从库负载均衡。
 	// Policy：定义从库选择策略，此处为 RandomPolicy（负载均衡策略，随机选择一个从库)。
-	_ = _db.Use(dbresolver.Register(dbresolver.Config{
-		Sources:  []gorm.Dialector{mysql.Open(connWrite)},                      // 写操作
-		Replicas: []gorm.Dialector{mysql.Open(connRead), mysql.Open(connRead)}, // 读操作
+	err = _db.Use(dbresolver.Register(dbresolver.Config{
+		Sources:  []gorm.Dialector{mysql.Open(masterDsn)}, // 写操作
+		Replicas: []gorm.Dialector{mysql.Open(slaveDsn)},  // 读操作
 		Policy:   dbresolver.RandomPolicy{},
 	}))
+	if err != nil {
+		utils.LogrusObj.Infoln("dbResolver register fail:", err.Error())
+	}
 
-	migration()
 }
 
 func NewDBClient(ctx context.Context) *gorm.DB {

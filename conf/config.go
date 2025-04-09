@@ -2,6 +2,7 @@ package conf
 
 import (
 	"gin-mail/dao"
+	"gin-mail/pkg/utils"
 	"gopkg.in/ini.v1"
 	"strings"
 )
@@ -10,12 +11,19 @@ var (
 	AppMode  string
 	HttpPort string
 
-	Db         string
-	DbHost     string
-	DbPort     string
-	DbUser     string
-	DbPassword string
-	DbName     string
+	DbMaster         string
+	DbHostMaster     string
+	DbPortMaster     string
+	DbUserMaster     string
+	DbPasswordMaster string
+	DbNameMaster     string
+
+	DbSlave         string
+	DbHostSlave     string
+	DbPortSlave     string
+	DbUserSlave     string
+	DbPasswordSlave string
+	DbNameSlave     string
 
 	ValidEmail string
 	SmtpHost   string
@@ -39,11 +47,14 @@ func Init() {
 	LoadPhotoPath(file)
 
 	// mysql 读
-	pathRead := strings.Join([]string{DbUser, ":", DbPassword, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8mb4&parseTime=True"}, "")
+	slaveDsn := strings.Join([]string{DbUserSlave, ":", DbPasswordSlave, "@tcp(", DbHostSlave, ":", DbPortSlave, ")/", DbNameSlave, "?charset=utf8mb4&parseTime=True"}, "")
 	// mysql 写
-	pathWrite := strings.Join([]string{DbUser, ":", DbPassword, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8mb4&parseTime=True"}, "")
+	masterDsn := strings.Join([]string{DbUserMaster, ":", DbPasswordMaster, "@tcp(", DbHostMaster, ":", DbPortMaster, ")/", DbNameMaster, "?charset=utf8mb4&parseTime=True"}, "")
 
-	dao.Database(pathRead, pathWrite)
+	utils.LogrusObj.Infoln("slaveDsn:", slaveDsn)
+	utils.LogrusObj.Infoln("masterDsn:", masterDsn)
+
+	dao.Database(slaveDsn, masterDsn)
 }
 
 func LoadServer(file *ini.File) {
@@ -52,12 +63,19 @@ func LoadServer(file *ini.File) {
 }
 
 func LoadMysql(file *ini.File) {
-	Db = file.Section("mysql").Key("Db").String()
-	DbHost = file.Section("mysql").Key("DbHost").String()
-	DbPort = file.Section("mysql").Key("DbPort").String()
-	DbUser = file.Section("mysql").Key("DbUser").String()
-	DbPassword = file.Section("mysql").Key("DbPassword").String()
-	DbName = file.Section("mysql").Key("DbName").String()
+	DbMaster = file.Section("mysql_master").Key("Db").String()
+	DbHostMaster = file.Section("mysql_master").Key("DbHost").String()
+	DbPortMaster = file.Section("mysql_master").Key("DbPort").String()
+	DbUserMaster = file.Section("mysql_master").Key("DbUser").String()
+	DbPasswordMaster = file.Section("mysql_master").Key("DbPassword").String()
+	DbNameMaster = file.Section("mysql_master").Key("DbName").String()
+
+	DbSlave = file.Section("mysql_slave").Key("Db").String()
+	DbHostSlave = file.Section("mysql_slave").Key("DbHost").String()
+	DbPortSlave = file.Section("mysql_slave").Key("DbPort").String()
+	DbUserSlave = file.Section("mysql_slave").Key("DbUser").String()
+	DbPasswordSlave = file.Section("mysql_slave").Key("DbPassword").String()
+	DbNameSlave = file.Section("mysql_slave").Key("DbName").String()
 }
 
 /* LoadRedis 在 cache 模块再导入，否则会造成循环引用

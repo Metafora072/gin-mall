@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"log"
 	"os"
@@ -43,7 +42,7 @@ func setOutputFile() (*os.File, error) {
 	if dir, err := os.Getwd(); err == nil {
 		logFilePath = dir + "/logs"
 	}
-	fmt.Printf("logFilePath = %s\n", logFilePath)
+	//fmt.Printf("logFilePath = %s\n", logFilePath)
 	// 使用 os.Stat() 检查目录是否存在。如果目录不存在，则使用 os.MkdirAll() 创建该目录。目录权限设置为 0777，表示所有用户都可以读写执行。
 	_, err := os.Stat(logFilePath)
 	if os.IsNotExist(err) { // 目录不存在

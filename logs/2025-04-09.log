@@ -1,0 +1,2 @@
+time="2025-04-09 15:43:34" level=info msg="redis ping: dial tcp: lookup redis on 8.8.8.8:53: no such host"
+time="2025-04-09 15:49:29" level=info msg="dbResolver register fail: dial tcp 127.0.0.1:3307: connect: connection refused"
